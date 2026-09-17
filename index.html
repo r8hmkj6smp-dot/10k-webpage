@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Athletics - Sports Store</title>
+  <style>
+    /* Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      border-bottom: 1px solid #334155;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: 1px;
+    }
+
+    .search-box input {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      border: 1px solid #334155;
+      background-color: #0f172a;
+      color: #fff;
+      width: 220px;
+      outline: none;
+    }
+
+    .cart-btn {
+      background-color: #0284c7;
+      color: #ffffff;
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s;
+    }
+
+    .cart-btn:hover {
+      background-color: #0369a1;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), 
+                  url('https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1350&q=80') center/cover no-repeat;
+      height: 50vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 1rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #cbd5e1;
+    }
+
+    /* Category Filter Buttons */
+    .filter-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background-color: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      padding: 0.5rem 1.25rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background-color: #38bdf8;
+      color: #0f172a;
+      border-color: #38bdf8;
+    }
+
+    /* Product Grid */
+    .products {
+      padding: 0 5% 4rem;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+
+    .product-card {
+      background-color: #1e293b;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 1.25rem;
+    }
+
+    .product-category {
+      font-size: 0.8rem;
+      color: #38bdf8;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .product-title {
+      font-size: 1.1rem;
+      color: #ffffff;
+      margin: 0.25rem 0 0.5rem;
+    }
+
+    .product-price {
+      font-size: 1.2rem;
+      color: #f8fafc;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .add-to-cart-btn {
+      width: 100%;
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .add-to-cart-btn:hover {
+      background-color: #0369a1;
+    }
+
+    /* Shopping Cart Sidebar Modal */
+    .cart-modal {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 380px;
+      height: 100%;
+      background-color: #1e293b;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+      transition: right 0.3s ease;
+      z-index: 2000;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cart-modal.open {
+      right: 0;
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 1rem;
+    }
+
+    .close-cart {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      margin: 1rem 0;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #334155;
+    }
+
+    .cart-footer {
+      border-top: 1px solid #334155;
+      padding-top: 1rem;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      background-color: #22c55e;
+      color: #fff;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #1e293b;
+      border-top: 1px solid #334155;
+      text-align: center;
+      padding: 1.5rem;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="#" class="logo">APEX ATHLETICS</a>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search equipment..." onkeyup="searchProducts()">
+    </div>
+    <button class="cart-btn" onclick="toggleCart()">Cart (<span id="cartCount">0</span>)</button>
+  </nav>
+
+  <!-- Hero Banner -->
+  <header class="hero">
+    <h1>Pro-Grade Sports Gear</h1>
+    <p>Find the right equipment for your sport.</p>
+  </header>
+
+  <!-- Filter Buttons -->
+  <div class="filter-container">
+    <button class="filter-btn active" onclick="filterCategory('all')">All</button>
+    <button class="filter-btn" onclick="filterCategory('football')">Football</button>
+    <button class="filter-btn" onclick="filterCategory('basketball')">Basketball</button>
+    <button class="filter-btn" onclick="filterCategory('fitness')">Fitness</button>
+    <button class="filter-btn" onclick="filterCategory('tennis')">Tennis</button>
+  </div>
+
+  <!-- Product Catalog -->
+  <section class="products">
+    <div class="product-grid" id="productGrid">
+      <!-- Products will be generated by JavaScript -->
+    </div>
+  </section>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-modal" id="cartModal">
+    <div class="cart-header">
+      <h2>Your Cart</h2>
+      <button class="close-cart" onclick="toggleCart()">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <p style="color: #94a3b8;">Your cart is empty.</p>
+    </div>
+    <div class="cart-footer">
+      <h3>Total: $<span id="cartTotal">0.00</span></h3>
+      <button class="checkout-btn" onclick="alert('Checkout functional coming soon!')">Checkout</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Apex Athletics. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript Functionality -->
+  <script>
+    // Product Dataset
+    const products = [
+      { id: 1, name: "Pro Match Football", category: "football", price: 29.99, img: "https://images.unsplash.com/photo-1614632537197-38a17061c2bd?auto=format&fit=crop&w=600&q=80" },
+      { id: 2, name: "Official Indoor Basketball", category: "basketball", price: 34.99, img: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=600&q=80" },
+      { id: 3, name: "Hex Dumbbell Pair (20 lbs)", category: "fitness", price: 49.99, img: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=600&q=80" },
+      { id: 4, name: "Graphite Tennis Racket", category: "tennis", price: 89.99, img: "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&w=600&q=80" },
+      { id: 5, name: "Professional Goalkeeper Gloves", category: "football", price: 24.99, img: "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?auto=format&fit=crop&w=600&q=80" },
+      { id: 6, name: "Adjustable Jump Rope", category: "fitness", price: 12.99, img: "https://images.unsplash.com/photo-1598289431512-b97b0917affc?auto=format&fit=crop&w=600&q=80" }
+    ];
+
+    let cart = [];
+
+    // Render Products to Screen
+    function renderProducts(items) {
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = items.map(p => `
+        <div class="product-card">
+          <img src="${p.img}" alt="${p.name}" class="product-img">
+          <div class="product-info">
+            <span class="product-category">${p.category}</span>
+            <h3 class="product-title">${p.name}</h3>
+            <p class="product-price">$${p.price.toFixed(2)}</p>
+            <button class="add-to-cart-btn" onclick="addToCart(${p.id})">Add to Cart</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Filter by Category
+    function filterCategory(category) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (category === 'all') {
+        renderProducts(products);
+      } else {
+        const filtered = products.filter(p => p.category === category);
+        renderProducts(filtered);
+      }
+    }
+
+    // Search Products
+    function searchProducts() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+      renderProducts(filtered);
+    }
+
+    // Cart Management
+    function addToCart(id) {
+      const product = products.find(p => p.id === id);
+      cart.push(product);
+      updateCart();
+    }
+
+    function updateCart() {
+      document.getElementById('cartCount').innerText = cart.length;
+      const cartItems = document.getElementById('cartItems');
+      
+      if (cart.length === 0) {
+        cartItems.innerHTML = '<p style="color: #94a3b8;">Your cart is empty.</p>';
+      } else {
+        cartItems.innerHTML = cart.map((item, index) => `
+          <div class="cart-item">
+            <div>
+              <h4>${item.name}</h4>
+              <small style="color: #38bdf8;">$${item.price.toFixed(2)}</small>
+            </div>
+            <button style="background:none; border:none; color:#ef4444; cursor:pointer;" onclick="removeFromCart(${index})">Remove</button>
+          </div>
+        `).join('');
+      }
+
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      document.getElementById('cartTotal').innerText = total.toFixed(2);
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function toggleCart() {
+      document.getElementById('cartModal').classList.toggle('open');
+    }
+
+    // Initial Render
+    renderProducts(products);
+  </script>
+</body>
+</html>
